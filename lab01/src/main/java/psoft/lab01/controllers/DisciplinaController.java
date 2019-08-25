@@ -18,17 +18,17 @@ public class DisciplinaController {
     @Autowired
     private DisciplinaService disciplinaService;
 
-    @PostMapping("/v1/api/disciplinas")
+    @PostMapping("/disciplinas")
     public ResponseEntity<Disciplina> adicionaDisciplina(@RequestBody DisciplinaDTO novaDisciplina) {
         return new ResponseEntity<>(disciplinaService.adicionaDisciplina(novaDisciplina), HttpStatus.CREATED);
     }
 
-    @GetMapping("/v1/api/disciplinas")
+    @GetMapping("/disciplinas")
     public ResponseEntity<Collection<Disciplina>> getDisciplinas() {
         return new ResponseEntity<>(disciplinaService.getDisciplinas(), HttpStatus.OK);
     }
 
-    @GetMapping("/v1/api/disciplinas/{id}")
+    @GetMapping("/disciplinas/{id}")
     public ResponseEntity getDisciplina(@PathVariable(value = "id") int id) {
         try {
             return new ResponseEntity<>(disciplinaService.getDisciplina(id), HttpStatus.OK);
@@ -37,7 +37,7 @@ public class DisciplinaController {
         }
     }
 
-    @PutMapping("v1/api/disciplinas/{id}/nome")
+    @PutMapping("/disciplinas/{id}/nome")
     public ResponseEntity atualizaNomeDisciplina(@PathVariable("id")  int id, @RequestBody DisciplinaDTO novoNomeDisciplina) {
         try {
             return new ResponseEntity<>(disciplinaService.atualizaNomeDisciplina(id, novoNomeDisciplina.getNome()), HttpStatus.OK);
@@ -46,7 +46,7 @@ public class DisciplinaController {
         }
     }
 
-    @PutMapping("v1/api/disciplinas/{id}/nota")
+    @PutMapping("/disciplinas/{id}/nota")
     public ResponseEntity atualizaNotaDisciplina(@PathVariable("id")  int id, @RequestBody DisciplinaDTO novaNotaDisciplina) {
         try {
             return new ResponseEntity<>(disciplinaService.atualizaNotaDisciplina(id, novaNotaDisciplina.getNota()), HttpStatus.OK);
@@ -55,7 +55,7 @@ public class DisciplinaController {
         }
     }
 
-    @DeleteMapping("v1/api/disciplinas/{id}")
+    @DeleteMapping("/disciplinas/{id}")
     public ResponseEntity deletaDisciplina(@PathVariable("id") int id) {
         try {
             return new ResponseEntity<>(disciplinaService.deletaDisciplina(id), HttpStatus.OK);
@@ -64,7 +64,7 @@ public class DisciplinaController {
         }
     }
 
-    @GetMapping("v1/api/disciplinas/ranking")
+    @GetMapping("/disciplinas/ranking")
     public ResponseEntity<List<Disciplina>> exibeRankingDisciplinas() {
         return new ResponseEntity<>(disciplinaService.exibeRankingDisciplinas(), HttpStatus.OK);
     }
