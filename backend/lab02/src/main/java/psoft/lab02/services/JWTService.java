@@ -33,6 +33,13 @@ public class JWTService {
         return optionalUsuario.isPresent() && optionalUsuario.get().getEmail().equals(email);
     }
 
+    public boolean usuarioTemPermissao(String authorizationHeader) throws ServletException {
+        String subject = getSujeitoDoToken(authorizationHeader);
+        Optional<Usuario> optionalUsuario = usuariosService.getUsuario(subject);
+
+        return  optionalUsuario.isPresent();
+    }
+
     private String getSujeitoDoToken(String authorizationHeader) throws ServletException {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             throw new ServletException("Token inexistente ou mal formado!");

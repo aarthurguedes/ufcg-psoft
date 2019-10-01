@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import psoft.lab02.entities.Disciplina;
 import psoft.lab02.services.DisciplinasService;
+import psoft.lab02.services.JWTService;
 
+import javax.servlet.ServletException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -15,14 +17,24 @@ import java.util.Optional;
 public class DisciplinasController {
 
     private DisciplinasService disciplinasService;
+    private JWTService jwtService;
 
-    public DisciplinasController(DisciplinasService disciplinasService) {
+    public DisciplinasController(DisciplinasService disciplinasService, JWTService jwtService) {
         this.disciplinasService = disciplinasService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping("/disciplinas")
-    public ResponseEntity<List<Disciplina>> getDisciplinas() {
-        return new ResponseEntity<>(disciplinasService.getDisciplinas(), HttpStatus.OK);
+    public ResponseEntity<List<Disciplina>> getDisciplinas(@RequestHeader("Authorization") String header) {
+        try {
+            if (jwtService.usuarioTemPermissao(header)) {
+                return new ResponseEntity<>(disciplinasService.getDisciplinas(), HttpStatus.OK);
+            }
+        } catch (ServletException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping("/disciplinas/{id}")
@@ -35,30 +47,50 @@ public class DisciplinasController {
     }
 
     @PutMapping("/disciplinas/likes/{id}")
-    public ResponseEntity<Disciplina> like(@PathVariable ("id") Long id) {
+    public ResponseEntity<Disciplina> like(@PathVariable ("id") Long id, @RequestHeader("Authorization") String header) {
         try {
-            return new ResponseEntity<>(disciplinasService.like(id), HttpStatus.OK);
+            if (jwtService.usuarioTemPermissao(header)) {
+                return new ResponseEntity<>(disciplinasService.like(id), HttpStatus.OK);
+            }
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (ServletException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @PutMapping("/disciplinas/nota/{id}")
-    public ResponseEntity<Disciplina> atualizaNota(@PathVariable("id") Long id, @RequestBody Disciplina disciplina) {
+    public ResponseEntity<Disciplina> atualizaNota(@PathVariable("id") Long id, @RequestBody Disciplina disciplina,
+                                                   @RequestHeader("Authorization") String header) {
         try {
-            return new ResponseEntity<>(disciplinasService.atualizaNota(id, disciplina.getNota()), HttpStatus.OK);
+            if (jwtService.usuarioTemPermissao(header)) {
+                return new ResponseEntity<>(disciplinasService.atualizaNota(id, disciplina.getNota()), HttpStatus.OK);
+            }
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (ServletException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @PutMapping("/disciplinas/comentarios/{id}")
-    public ResponseEntity<Disciplina> comenta(@PathVariable("id") Long id, @RequestBody Disciplina disciplina) {
+    public ResponseEntity<Disciplina> comenta(@PathVariable("id") Long id, @RequestBody Disciplina disciplina,
+                                              @RequestHeader("Authorization") String header) {
         try {
-            return new ResponseEntity<>(disciplinasService.comenta(id, disciplina.getComentarios()), HttpStatus.OK);
+            if (jwtService.usuarioTemPermissao(header)) {
+                return new ResponseEntity<>(disciplinasService.comenta(id, disciplina.getComentarios()), HttpStatus.OK);
+            }
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (ServletException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping("/disciplinas/ranking/notas")
